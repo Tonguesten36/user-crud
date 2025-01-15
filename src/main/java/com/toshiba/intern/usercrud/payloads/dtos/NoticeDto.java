@@ -1,17 +1,16 @@
-package com.toshiba.intern.usercrud.entity;
+package com.toshiba.intern.usercrud.payloads.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Notice implements Serializable
+public class NoticeDto implements Serializable
 {
     /**
      * Subject notification on firebase

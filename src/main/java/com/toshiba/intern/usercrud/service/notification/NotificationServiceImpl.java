@@ -6,13 +6,14 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.toshiba.intern.usercrud.config.FirebaseProperties;
-import com.toshiba.intern.usercrud.entity.Notice;
+import com.toshiba.intern.usercrud.payloads.dtos.NoticeDto;
 
 import com.toshiba.intern.usercrud.entity.PushDevice;
 import com.toshiba.intern.usercrud.entity.User;
 import com.toshiba.intern.usercrud.payloads.dtos.PushDeviceDto;
 import com.toshiba.intern.usercrud.repository.PushDeviceRepository;
 import com.toshiba.intern.usercrud.repository.UserRepository;
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,31 @@ public class NotificationServiceImpl implements NotificationService {
     private final PushDeviceRepository pushDeviceRepository;
     private final UserRepository userRepository;
 
-    public void sendNotification(Notice notice) throws FirebaseMessagingException {
+    public void sendNotificationByUserId(int userId, NoticeDto noticeDto) throws FirebaseMessagingException {
+        // Get all tokens associated with this userid tokens = [t1, t2]
+        List<String> fcmTokens = pushDeviceRepository.findAllTokensByUserId(userId);
+
+        // Log tokens
+        if (fcmTokens.isEmpty()) {
+            System.out.println("No tokens found for user ID: " + userId);
+            return;
+        }
+
+        // Send notification in 'notice' to each device with the token
+        for (String fcmToken : fcmTokens) {
+            System.out.println("FCM Token: " + fcmToken);
+            noticeDto.setFcmToken(fcmToken);
+
+            try{
+                sendNotification(noticeDto);
+            }
+            catch (Exception e) {
+                System.out.println("Error sending notification. Skipping this token");
+            }
+        }
+    }
+
+    public void sendNotification(NoticeDto notice) throws FirebaseMessagingException {
         // This registration token comes from the client FCM SDKs.
         String registrationToken = notice.getFcmToken();
 
@@ -44,8 +69,6 @@ public class NotificationServiceImpl implements NotificationService {
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(registrationToken)
-//                .setCondition("'testing' in topics")
-//                .setTopic("testing")
                 .build();
 
 
@@ -56,57 +79,66 @@ public class NotificationServiceImpl implements NotificationService {
         System.out.println("Successfully sent message: " + response);
     }
 
-    public void sendNotificationByUserId(int userId, Notice notice) throws FirebaseMessagingException {
-        //Get all tokens associated with this userid tokens = [t1, t2]
-        // For each token in the list
-//        fo:
-//             ) {
-//            notice.setToken(t
-//        }
-        //     sendNotification(notice)
-    }
-
     // TODO: Register Device Token
-    public PushDevice registerFcmToken(PushDeviceDto pushDeviceDto) {
-
-        // Check là cùng user và cùng device thì token mới lên thì đăng ký vào
-        // Token cũ thì expired
-
-
+    public void registerFcmToken(PushDeviceDto pushDeviceDto) {
 
         User user = userRepository.findById(pushDeviceDto.getUserId()).get();
 
-        // Create new PushDevice object
-        PushDevice newPushDevice = new PushDevice(
-                user,
-                pushDeviceDto.getToken(),
-                pushDeviceDto.getDeviceName(),
-                pushDeviceDto.getDeviceUuid(),
-                pushDeviceDto.getOs(),
-                pushDeviceDto.getOsVersion(),
-                pushDeviceDto.getSdkVersion(),
-                pushDeviceDto.getApp(),
-                pushDeviceDto.getAppVersion(),
-                pushDeviceDto.getIp(),
-                pushDeviceDto.getUserAgent()
-        );
+        // TODO: Fix oldPushDevice return null
+        List<PushDevice> oldPushDevices = pushDeviceRepository.findDevicesByUserId(user.getId());
 
-        // Save the created object
-        return pushDeviceRepository.save(newPushDevice);
+        try{
+            // Check if the token already exist
+
+            if(pushDeviceRepository.isFcmTokenExist(pushDeviceDto.getToken())){
+                System.out.println("FCM token already exist");
+                return;
+            }
+
+            for (PushDevice pushDevice : oldPushDevices) {
+                // Check if the user_id and uuid already exist
+                if(pushDevice.getDeviceUuid().equals(pushDeviceDto.getDeviceUuid())
+                && pushDevice.getUserRegisterDevice().getId() == pushDeviceDto.getUserId()){
+                    System.out.println("Deleting old FCM token...");
+                    // Simply delete the row containing the old fcm token
+                    // (the new one will be created below)
+                    pushDeviceRepository.delete(pushDevice);
+                }
+            }
+
+            // Create new PushDevice object
+            System.out.println("Registering new FCM token...");
+            PushDevice newPushDevice = new PushDevice(
+                    user,
+                    pushDeviceDto.getToken(),
+                    pushDeviceDto.getDeviceName(),
+                    pushDeviceDto.getDeviceUuid(),
+                    pushDeviceDto.getOs(),
+                    pushDeviceDto.getOsVersion(),
+                    pushDeviceDto.getSdkVersion(),
+                    pushDeviceDto.getApp(),
+                    pushDeviceDto.getAppVersion(),
+                    pushDeviceDto.getIp(),
+                    pushDeviceDto.getUserAgent()
+            );
+
+            // Save the created object
+            pushDeviceRepository.save(newPushDevice);
+        }
+        catch (Exception e) {
+            System.out.println("Sentry has captured an exception.");
+            Sentry.captureException(e);
+//            e.printStackTrace();
+        }
     }
 
-
-    public String getAccessToken() throws IOException {
+    public void getAccessToken() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new FileInputStream(firebaseProperties.getGoogleCredentials()))
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
         googleCredentials.refreshIfExpired();
         System.out.println(googleCredentials.getAccessToken().getTokenValue());
-        return googleCredentials.getAccessToken().getTokenValue();
-    }
-
-    public PushDeviceRepository getPushDeviceRepository() {
-        return pushDeviceRepository;
+        googleCredentials.getAccessToken().getTokenValue();
     }
 }
