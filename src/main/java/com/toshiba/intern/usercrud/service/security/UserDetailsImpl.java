@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.toshiba.intern.usercrud.entity.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,16 +16,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class UserDetailsImpl implements UserDetails {
   private static final long serialVersionUID = 1L;
 
+  @Getter
   private Long id;
 
-  private String username;
+  private final String username;
 
+  @Getter
   private String email;
 
   @JsonIgnore
   private String password;
 
-  private Collection<? extends GrantedAuthority> authorities;
+  private final Collection<? extends GrantedAuthority> authorities;
 
   public UserDetailsImpl(Long id, String username, String email, String password,
       Collection<? extends GrantedAuthority> authorities) {
@@ -53,15 +56,7 @@ public class UserDetailsImpl implements UserDetails {
     return authorities;
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  @Override
+    @Override
   public String getPassword() {
     return password;
   }

@@ -3,11 +3,14 @@ package com.toshiba.intern.usercrud.entity;
 import com.toshiba.intern.usercrud.enums.ERole;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Collection;
 
 @Entity
 @Data
+@Getter
 @Table(name = "roles")
 public class Role {
 
@@ -15,6 +18,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @Setter
+    @Getter
     @Column(name = "name", nullable=false)
     @Enumerated(EnumType.STRING)
     private ERole name;
@@ -27,17 +32,5 @@ public class Role {
     }
 
     public Role(){}
-
-    public int getId() {
-        return id;
-    }
-
-    public ERole getName() {
-        return name;
-    }
-
-    public void setName(ERole roleName) {
-        this.name = roleName;
-    }
 
 }

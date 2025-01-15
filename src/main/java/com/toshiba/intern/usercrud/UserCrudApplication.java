@@ -1,13 +1,11 @@
 package com.toshiba.intern.usercrud;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableTransactionManagement
 @SpringBootApplication(exclude = {io.sentry.spring.boot.jakarta.SentryAutoConfiguration.class})
