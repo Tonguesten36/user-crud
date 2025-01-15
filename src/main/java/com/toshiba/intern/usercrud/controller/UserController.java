@@ -1,11 +1,18 @@
 package com.toshiba.intern.usercrud.controller;
 
 import com.toshiba.intern.usercrud.entity.User;
+import com.toshiba.intern.usercrud.payloads.dtos.LoginDto;
 import com.toshiba.intern.usercrud.payloads.dtos.UpdateUserDto;
 import com.toshiba.intern.usercrud.payloads.dtos.UserCreateDto;
 import com.toshiba.intern.usercrud.service.user.UserServiceImpl;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.sentry.Sentry;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +33,13 @@ public class UserController {
     }
 
     @GetMapping("/")
+    @Operation(summary = "Read all users")
+    @ApiResponses(value ={
+        @ApiResponse(
+            responseCode = "200",
+            description = "Get all users in the database",
+            content = @Content())
+    })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<User> getAllUsers() {
         try{
@@ -41,6 +55,14 @@ public class UserController {
     }
 
     @PostMapping("/")
+    @Operation(summary = "Create a new user")
+    @ApiResponses(value ={
+        @ApiResponse(
+            responseCode = "201",
+            description = "Create a new user using the CRUD API directly, require admin JWT",
+            content = @Content()
+        )
+    })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(value = HttpStatus.CREATED)
     public User createUser(@RequestBody UserCreateDto userDto) {
@@ -48,8 +70,19 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
+    @Operation(summary = "Find an user by their ID")
+    @ApiResponses(value ={
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content()
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            content = @Content()
+        )
+    })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    @ResponseStatus(value = HttpStatus.OK)
     public ResponseEntity<User> getUserById(@PathVariable int userId) {
         return userService.getUserById(userId)
                 .map(ResponseEntity::ok)
@@ -57,6 +90,18 @@ public class UserController {
     }
 
     @PutMapping("{userId}")
+    @Operation(summary = "Update a specific user by their ID")
+    @ApiResponses(value ={
+        @ApiResponse(
+            responseCode = "200",
+                content = @Content()
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Cannot update admin",
+                content = @Content()
+        )
+    })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable int userId, @RequestBody UpdateUserDto newUser)
     {
@@ -71,6 +116,19 @@ public class UserController {
     }
 
     @DeleteMapping("{userId}")
+    @Operation(summary = "Delete a specific user by their ID")
+    @ApiResponses(value ={
+        @ApiResponse(
+                responseCode = "200",
+                description = "User deleted successfully!",
+                content = @Content()
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                description = "Cannot delete admin.",
+                content = @Content()
+        )
+    })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable int userId) {
 
