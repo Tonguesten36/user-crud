@@ -1,5 +1,6 @@
 package com.toshiba.intern.usercrud.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.toshiba.intern.usercrud.enums.ERole;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class Role {
     private ERole name;
 
     @ManyToMany(mappedBy = "roles")
+    @JsonIgnoreProperties("roles") // Prevent recursion but still include `users` if needed
     private Collection<User> users;
 
     public Role(ERole name) {

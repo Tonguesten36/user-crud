@@ -1,5 +1,6 @@
 package com.toshiba.intern.usercrud.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -40,6 +41,7 @@ public class User{
                     name = "user_id"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id"))
+    @JsonIgnoreProperties("users") // Prevent recursion but still include other fields like `name`
     private Collection<Role> roles;
 
     public User() {
