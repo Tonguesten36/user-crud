@@ -79,12 +79,10 @@ public class NotificationServiceImpl implements NotificationService {
         System.out.println("Successfully sent message: " + response);
     }
 
-    // TODO: Register Device Token
     public void registerFcmToken(PushDeviceDto pushDeviceDto) {
 
         User user = userRepository.findById(pushDeviceDto.getUserId()).get();
 
-        // TODO: Fix oldPushDevice return null
         List<PushDevice> oldPushDevices = pushDeviceRepository.findDevicesByUserId(user.getId());
 
         try{

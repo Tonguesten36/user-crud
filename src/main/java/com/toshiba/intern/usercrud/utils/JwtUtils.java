@@ -24,7 +24,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtils
 {
-    Dotenv dotenv = Dotenv.configure().load();
+    Dotenv dotenv = Dotenv.configure().directory("/build").load();
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 

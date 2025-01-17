@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: postgres-container
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=user_crud_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Eco443&#mX!6
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: .
+    container_name: springboot-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_crud_test
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Eco443&#mX!6
+      - ADMIN_ID=652
+      - SENTRY_DSN=https://944f3bd61a417579c045f24dcc4a4e37@o4507061053227008.ingest.us.sentry.io/4508526877933568
+    volumes:
+      - ./.env:/build/.env
+      - ./src/main/resources/service_account.json:/build/src/main/resources/service_account.json
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:

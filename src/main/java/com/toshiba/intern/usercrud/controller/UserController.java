@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     private final UserServiceImpl userService;
@@ -105,7 +107,9 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable int userId, @RequestBody UpdateUserDto newUser)
     {
-        Dotenv dotenv = Dotenv.load();
+        Dotenv dotenv = Dotenv.configure()
+                .directory("/build")  // Specify the directory where .env is located
+                .load();
         int admin_id = Integer.parseInt(dotenv.get("ADMIN_ID"));
         if(userId == admin_id){
             return new ResponseEntity<>("Cannot update admin.", HttpStatus.BAD_REQUEST);
@@ -132,7 +136,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable int userId) {
 
-        Dotenv dotenv = Dotenv.load();
+        Dotenv dotenv = Dotenv.configure().directory("/build").load();
         int admin_id = Integer.parseInt(dotenv.get("ADMIN_ID"));
         if(userId == admin_id){
             return new ResponseEntity<String>("Cannot delete admin.", HttpStatus.BAD_REQUEST);

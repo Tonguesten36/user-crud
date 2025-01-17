@@ -79,10 +79,9 @@ public class AuthController
     @PostMapping("/register")
     @Operation(summary = "registering a new account (without directly using the CRUD API)")
     @ApiResponses(value ={
-            @ApiResponse(responseCode = "201", description = "Username created successfully"),
+            @ApiResponse(responseCode = "201", description = "Username created successfully", content = @Content),
             @ApiResponse(responseCode = "500", description = "Failed to register user", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Username already exists", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Email already exists", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Username (or email) already exists", content = @Content),
     })
     public ResponseEntity<?> register(@RequestBody RegisterDto registerDto){
         if (userRepository.existsByUsername(registerDto.getUsername())) {

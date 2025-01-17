@@ -21,17 +21,6 @@ public class UserCrudApplication {
     @Bean
     CommandLineRunner runner() {
         System.out.println("CommandLineRunner bean is being created.");
-//        Dotenv dotenv = Dotenv.load();
-//
-//        String jwt_secret = dotenv.get("JWT_SECRET");
-//        String postgres_password = dotenv.get("POSTGRES_PASSWORD");
-//        String postgres_username = dotenv.get("POSTGRES_USERNAME");
-//        String postgres_database = dotenv.get("POSTGRES_DB_NAME");
-//
-//        System.out.println("JWT_SECRET: " + jwt_secret + "\n POSTGRES_PASSWORD: " + postgres_password + "\n POSTGRES_USERNAME: " + postgres_username + "\n POSTGRES_DB_NAME: " + postgres_database);
-
-
-
         return args -> System.out.println("Application has started!");
     }
 }
