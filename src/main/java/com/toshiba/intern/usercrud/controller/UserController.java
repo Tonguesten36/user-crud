@@ -45,13 +45,10 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<User> getAllUsers() {
         try{
-            List<User> users = userService.getAllUsers();
-            System.out.println(users);
-            return users;
+            return userService.getAllUsers();
         }
         catch(Exception e){
             Sentry.captureException(e);
-            System.out.println("Sentry captured an exception");
         }
         return null;
     }

@@ -13,7 +13,6 @@ import io.sentry.Sentry;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -67,7 +65,6 @@ public class AuthController
         }
         catch (Exception e){
             Sentry.captureException(e);
-            System.out.println("Sentry captured an exception");
         }
 
         return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -110,7 +107,6 @@ public class AuthController
         }
         catch (Exception e){
             Sentry.captureException(e);
-            System.out.println("Sentry captured an exception");
         }
         return new ResponseEntity<>("Failed to register user", HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -141,7 +137,6 @@ public class AuthController
         }
         catch (Exception e){
             Sentry.captureException(e);
-            System.out.println("Sentry captured an exception");
         }
         return new ResponseEntity<>("Failed to register admin", HttpStatus.INTERNAL_SERVER_ERROR);
     }
