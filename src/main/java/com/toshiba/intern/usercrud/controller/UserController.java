@@ -1,7 +1,6 @@
 package com.toshiba.intern.usercrud.controller;
 
 import com.toshiba.intern.usercrud.entity.User;
-import com.toshiba.intern.usercrud.payloads.dtos.LoginDto;
 import com.toshiba.intern.usercrud.payloads.dtos.UpdateUserDto;
 import com.toshiba.intern.usercrud.payloads.dtos.UserCreateDto;
 import com.toshiba.intern.usercrud.service.user.UserServiceImpl;
@@ -10,7 +9,6 @@ import io.sentry.Sentry;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -104,11 +102,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable int userId, @RequestBody UpdateUserDto newUser)
     {
-        Dotenv dotenv = Dotenv.configure()
-                .directory("/build")  // Specify the directory where .env is located
-                .load();
-        int admin_id = Integer.parseInt(dotenv.get("ADMIN_ID"));
-        if(userId == admin_id){
+        if(userId == getAdminId()){
             return new ResponseEntity<>("Cannot update admin.", HttpStatus.BAD_REQUEST);
         }
         userService.updateUser(userId, newUser);
@@ -132,14 +126,17 @@ public class UserController {
     })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable int userId) {
-
-        Dotenv dotenv = Dotenv.configure().directory("/build").load();
-        int admin_id = Integer.parseInt(dotenv.get("ADMIN_ID"));
-        if(userId == admin_id){
+        if(userId == getAdminId()){
             return new ResponseEntity<>("Cannot delete admin.", HttpStatus.BAD_REQUEST);
         }
         userService.deleteUser(userId);
         return new ResponseEntity<>("User deleted successfully!.", HttpStatus.OK);
     }
 
+    public int getAdminId(){
+        Dotenv env = Dotenv.configure()
+                .directory("/build")  // Specify the directory where .env is located
+                .load();
+        return Integer.parseInt(env.get("ADMIN_ID"));
+    }
 }
