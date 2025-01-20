@@ -75,8 +75,3 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     return null;
   }
 }
-
-//After this, everytime you want to get UserDetails, just use SecurityContext like this:
-//
-//UserDetails userDetails =
-//        (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

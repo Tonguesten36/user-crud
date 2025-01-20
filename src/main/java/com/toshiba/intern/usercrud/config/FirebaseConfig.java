@@ -18,14 +18,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class FirebaseConfig
 {
-    private final FirebaseProperties firebaseProperties;
-
     @Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
         String credentialsPath = "/build/src/main/resources/service_account.json";
-//        if (credentialsPath == null || credentialsPath.isBlank()) {
-//            throw new IllegalArgumentException("Google credentials path must not be null or empty.");
-//        }
 
         GoogleCredentials googleCredentials;
         try (FileInputStream serviceAccount = new FileInputStream(credentialsPath)) {

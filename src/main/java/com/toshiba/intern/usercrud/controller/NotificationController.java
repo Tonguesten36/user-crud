@@ -38,7 +38,7 @@ public class NotificationController {
     // Register fcm là 1 API để save token gửi từ postman và store vào db
     @PostMapping("/register-fcm")
     @Operation(summary = "Register a device's FCM token")
-    public void registerFcm(@RequestBody PushDeviceDto pushDeviceDto) throws FirebaseMessagingException, IOException {
+    public void registerFcm(@RequestBody PushDeviceDto pushDeviceDto){
         notificationService.registerFcmToken(pushDeviceDto);
     }
 
