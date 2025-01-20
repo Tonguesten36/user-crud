@@ -62,9 +62,6 @@ public class AuthController
             String jwt = jwtUtils.generateToken(authentication);
 
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            List<String> roles = userDetails.getAuthorities().stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .toList();
 
             return new ResponseEntity<>("JWT for " + userDetails.getUsername() + ": " + jwt, HttpStatus.OK);
         }

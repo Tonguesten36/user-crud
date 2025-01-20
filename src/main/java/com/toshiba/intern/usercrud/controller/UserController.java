@@ -139,10 +139,10 @@ public class UserController {
         Dotenv dotenv = Dotenv.configure().directory("/build").load();
         int admin_id = Integer.parseInt(dotenv.get("ADMIN_ID"));
         if(userId == admin_id){
-            return new ResponseEntity<String>("Cannot delete admin.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Cannot delete admin.", HttpStatus.BAD_REQUEST);
         }
         userService.deleteUser(userId);
-        return new ResponseEntity<String>("User deleted successfully!.", HttpStatus.OK);
+        return new ResponseEntity<>("User deleted successfully!.", HttpStatus.OK);
     }
 
 }
