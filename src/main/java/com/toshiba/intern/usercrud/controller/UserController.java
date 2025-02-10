@@ -134,9 +134,7 @@ public class UserController {
     }
 
     public int getAdminId(){
-        Dotenv env = Dotenv.configure()
-                .directory("/build")  // Specify the directory where .env is located
-                .load();
+        Dotenv env = Dotenv.configure().load();
         return Integer.parseInt(env.get("ADMIN_ID"));
     }
 }

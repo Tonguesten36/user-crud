@@ -20,6 +20,7 @@ public class PagesController
         @ApiResponse(responseCode = "200", description = "returns \"This is a public page\"", content = @Content)
     })
     public String publicPage(){
+        System.out.println("publicPage called");
         return "This is a public page";
     }
 
@@ -33,6 +34,7 @@ public class PagesController
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public String privatePage(){
+        System.out.println("privatePage called");
         return "This is a private page, only those who have ROLE_ADMIN or ROLE_USER get to access this route";
     }
 }

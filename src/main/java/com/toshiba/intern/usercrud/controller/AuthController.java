@@ -61,7 +61,7 @@ public class AuthController
 
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            return new ResponseEntity<>("JWT for " + userDetails.getUsername() + ": " + jwt, HttpStatus.OK);
+            return new ResponseEntity<>(jwt, HttpStatus.OK);
         }
         catch (Exception e){
             Sentry.captureException(e);

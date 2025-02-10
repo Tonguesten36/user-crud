@@ -20,7 +20,7 @@ public class FirebaseConfig
 {
     @Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
-        String credentialsPath = "/build/src/main/resources/service_account.json";
+        String credentialsPath = "src/main/resources/service_account.json";
 
         GoogleCredentials googleCredentials;
         try (FileInputStream serviceAccount = new FileInputStream(credentialsPath)) {
